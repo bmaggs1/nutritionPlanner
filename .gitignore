@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,osx,visualstudiocode,node,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,osx,visualstudiocode,node,windows
 
+
+# Project Files
+user_data.json
+
 ### Node ###
 # Logs
 logs
