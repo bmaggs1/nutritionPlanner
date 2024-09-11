@@ -1,8 +1,13 @@
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+#Environment Variables
+API_KEY = os.getenv("API_KEY")
+
 
 def get_50_random():
-    API_KEY = "u thought! ( dont check previous commits )"
-
     URL = f"https://api.spoonacular.com/recipes/random?apiKey={API_KEY}&number=10&includeNutrition=true"
 
     response = requests.get(URL)
@@ -36,3 +41,5 @@ def get_50_random():
             print("No food items found grrr")
     else:
         print(f"Error: UInable to retreieve food data (status code: {response.status_code})")
+
+get_50_random()
