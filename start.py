@@ -1,7 +1,16 @@
-import requests
-import random
+import os, json
+import Nutrition
 
 class User:
+    def calculate_daily_calories(self):
+        if self.gender == 'm':
+            base_bmr = (10 * self.weight) + (6.25 * self.height) - (5 * self.age) + 5
+        else:
+            base_bmr = (10 * self.weight) + (6.25 * self.height) - (5 * self.age) - 161
+        tot_bmr = base_bmr * (((1.9 - 1.2) / 5) * (self.activity_level - 1) + 1.2)
+        dailyCals = tot_bmr + (200 * (self.nutrition_goal - 3))
+        return dailyCals
+
     def __init__(self, gender, weight, height, age, activity_level, nutritition_goal):
         self.gender = gender
         self.weight = weight
@@ -10,26 +19,28 @@ class User:
         self.activity_level = activity_level
         self.nutrition_goal = nutritition_goal
         self.daily_calories = self.calculate_daily_calories()
-
-        def calculate_daily_calories(self):
-            if self.gender == 'm':
-                base_bmr = (10 * self.weight) + (6.25 * self.height) - (5 * self.age) + 5
-            else:
-                base_bmr = (10 * self.weight) + (6.25 * self.height) - (5 * self.age) - 161
-            tot_bmr = base_bmr * (((1.9 - 1.2) / 5) * (self.activity_level - 1) + 1.2)
-            dailyCals = tot_bmr + (200 * (self.nutrition_goal - 3))
-            return dailyCals    
-        
-        @staticmethod
-        def from_dict(data):
-            return User(
-                gender = data['gender'],
-                weight = data['weight'],
-                height = data['height'],
-                age = data['age'],
-                activity_level = data['activity_level'],
-                nutritition_goal = data['nutrition_goal']
-            )
+    
+    def to_dict(self):
+        """Convert user data to a dictionary for saving to JSON"""
+        return {
+            'gender': self.gender,
+            'weight': self.weight,
+            'height': self.height,
+            'age': self.age,
+            'activity_level': self.activity_level,
+            'nutrition_goal': self.nutrition_goal
+        }
+    
+    @staticmethod
+    def from_dict(data):
+        return User(
+            gender = data['gender'],
+            weight = data['weight'],
+            height = data['height'],
+            age = data['age'],
+            activity_level = data['activity_level'],
+            nutritition_goal = data['nutrition_goal']
+        )
 
 def save_user_data(user):
     with open('user_data.json', 'w') as file:
@@ -42,43 +53,6 @@ def load_user_data():
             data = json.load(file)
             return User.from_dict(data)
     return None
-
-def get_50_random():
-    API_KEY = "u thought! ( dont check previous commits )"
-
-    URL = f"https://api.spoonacular.com/recipes/random?apiKey={API_KEY}&number=10&includeNutrition=true"
-
-    response = requests.get(URL)
-
-    if response.status_code == 200:
-        #Parse json and get list of recipes
-        data = response.json()
-        recipes = data.get("recipes", [])
-
-        #print each recipe title along with macronutrients(calories,protein,fat,carb)
-        if recipes:
-            for idx, recipe in enumerate(recipes, 1):
-                title = recipe.get('title', 'Unknown Title')
-                nutrients = recipe.get('nutrition', {}).get('nutrients', [])
-
-                def find_nutrient(nutrient_name):
-                    nutrient = next((item for item in nutrients if item.get('name') == nutrient_name), None)
-                    return nutrient.get('amount', 'Unknown') if nutrient else 'Unknown'
-                
-                calories = find_nutrient('Calories')
-                protein = find_nutrient('Protein')
-                fat = find_nutrient('Fat')
-                carbs = find_nutrient('Carbohydrates')
-
-                print(f"Recipe {idx}: {title}")
-                print(f"    Calories: {calories} kcal")
-                print(f"    Protein: {protein} g")
-                print(f"    Fat: {fat} g")
-                print(f"    Carbohydrates: {carbs} g\n")
-        else:
-            print("No food items found grrr")
-    else:
-        print(f"Error: UInable to retreieve food data (status code: {response.status_code})")
 
 def get_user_info():
     print("Welcome to my nutrition planner!")
@@ -176,7 +150,7 @@ def main():
         print(f"Nutrition Goal: {user.nutrition_goal}")
         print(f"Your daily calorie intake should be: {user.daily_calories} kcal/day\n")
 
-    get_50_random()
+    Nutrition.get_50_random()
 
 
 
