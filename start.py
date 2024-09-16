@@ -124,7 +124,7 @@ def get_user_info():
     nutrition_goal = input("Please enter your age : ")
     while nutrition_goal.isdigit() == False or int(nutrition_goal) < 1 or int(nutrition_goal) > 5:
         nutrition_goal = input("Please enter a valid choice: ")
-    nutrition_goal = int(user_age)
+    nutrition_goal = int(nutrition_goal)
 
     goal_cals = total_BMR + (200 * (nutrition_goal - 3))
 
@@ -150,7 +150,7 @@ def main():
         print(f"Nutrition Goal: {user.nutrition_goal}")
         print(f"Your daily calorie intake should be: {user.daily_calories} kcal/day\n")
 
-    Nutrition.get_50_random()
+    Nutrition.get_50_random(user)
 
 
 
