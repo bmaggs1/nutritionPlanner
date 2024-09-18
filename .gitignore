@@ -3,7 +3,7 @@
 
 
 # Project Files
-user_data.json
+*.json
 
 ### Node ###
 # Logs
